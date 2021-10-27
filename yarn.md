@@ -372,6 +372,14 @@ In this tutorial I will describe how to write a simple MapReduce program for Had
 <br><br>
 
 ## 2.1 Motivation
+Even though the Hadoop framework is written in Java, programs for Hadoop
+need not to be coded in Java but can also be developed in other languages like
+Python or C++ (the latter since version 0.14.1).  
+However, Hadoop’s documentation and the most prominent Python example
+on the Hadoop website could make you think that you must translate your
+Python code using Jython into a Java jar file.  
+Obviously, this is not very convenient and can even be problematic if you depend on Python features not provided by Jython
+
 
 <br><br>
 
@@ -498,14 +506,15 @@ bar     1
 foo     3
 labs    1
 quux    2
-
-# Using a downloaded Ebook
+```
+Using a downloaded Ebook
+```
 > cat text.txt | /home/emile.ekane-ekane/mapper.py
 # After we reduce
 >  cat text.txt | /home/emile.ekane-ekane/mapper.py | sort -k1,1 | /home/emile.ekane-ekane/reducer.py
 
 ```
-Using a downloaded Ebook
+
 
 <br><br><br>
 
@@ -526,24 +535,24 @@ wget https://www.gutenberg.org/files/4300/4300-0.txt
 mv pg20417.txt outline.txt
 mv 5000-8.txt vinci.txt
 mv 4300-0.txt ulysse.txt
-
-
 ```
-<br><br><br>
+<br><br>
 
 ### 2.4.2 Copy local example data to HDFS
 Before we run the actual MapReduce job, we must first copy the files from our local file system to Hadoop’s HDFS
 ```
 hdfs dfs -put outline.txt vinci.txt ulysse.txt
+    #OR 
+hdfs dfs -copyFromLocal outline.txt vinci.txt ulysse.txt
 ```
-<br><br><br>
+<br><br>
 
 ### 2.4.3 Run the MapReduce job
 Now that everything is prepared, we can finally run our Python MapReduce job on the Hadoop cluster.
 The job will read all the files in the HDFS directory /user/<username>/gutenberg, process it, and store the results in the HDFS directory /user/<username>/gutenberg-output
 ```
 > hdfs dfs -mkdir /user/emile.ekane-ekane/gutenberg
-> hdfs dfs -mkdir /user/emile.ekane-ekane/gutenberg-output
+
 #Move the files in the directory
 
 [emile.ekane-ekane@hadoop-edge01 ~]$ hdfs dfs -ls /user/emile.ekane-ekane/gutenberg
@@ -552,15 +561,9 @@ Found 3 items
 -rw-r--r--   3 emile.ekane-ekane emile.ekane-ekane    1586336 2021-10-24 18:45 /user/emile.ekane-ekane/gutenberg/ulysse.txt
 -rw-r--r--   3 emile.ekane-ekane emile.ekane-ekane    1428843 2021-10-24 18:45 /user/emile.ekane-ekane/gutenberg/vinci.txt
 
-
->yarn jar /usr/odp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples.jar  pi 16 100000
-
->$HADOOP_HOME/bin/hadoop jar $HADOOP_HOME/mapred/contrib/streaming/hadoop-streaming.jar
-
+# We run the Map Reduce job
 > yarn jar /usr/odp/current/hadoop-mapreduce-client/hadoop-streaming.jar -input /user/emile.ekane-ekane/gutenberg/* -output /user/emile.ekane-ekane/gutenberg-output -file /home/emile.ekane-ekane/mapper.py -mapper /home/emile.ekane-ekane/mapper.py -file /home/emile.ekane-ekane/reducer.py -reducer /home/emile.ekane-ekane/reducer.py
 
-
-> yarn jar /usr/odp/current/hadoop-mapreduce-client/hadoop-streaming.jar -input /user/emile.ekane-ekane/gutenberg/* -output /user/emile.ekane-ekane/gutenberg-output -file /home/emile.ekane-ekane/mapper.py -mapper /home/emile.ekane-ekane/mapper.py -file /home/emile.ekane-ekane/reducer.py -reducer /home/emile.ekane-ekane/reducer.py
 
 Results
 
