@@ -1,7 +1,7 @@
 # YARN & MapReduce 1
 ## *Emile .E. EKANE*
 ## *21/10/2021*
-## 
+
 
 <br><br>
 
